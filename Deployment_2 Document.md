@@ -1,7 +1,12 @@
-(1)
-.......................................................................................
-INSTALL JENKINS ON AN EC2 IF YOU HAVEN'T ALREADY
-.......................................................................................
+<h1>Testing stage of the CI/CD pipeline deployment 2 </h1>
+
+<h2>(1) Set up and configure your Jenkins environment.</h2>
+
+
+- INSTALL JENKINS ON AN EC2 IF YOU HAVEN'T ALREADY
+
+
+```
 sudo apt update
 sudo apt ugrade -y
 sudo apt -y install openjdk-11-jre
@@ -14,99 +19,86 @@ sudo apt-get update
 sudo apt-get -y install jenkins
 sudo systemctl start jenkins
 systemctl status jenkins >> ~/file.txt
----------------------------------------------------------------------------------------
-UNLOCK JENKINS AND PROCEED WITH THE SETUP
+```
+------------------------------------------------------------------------------------------------------------------------------
+- UNLOCK JENKINS AND PROCEED WITH THE SETUP.
+
 To unlock jenkins, cat the file below and copy & paste the password.
 (This is done to ensure that Jenkins is securely set up by the administrator.)
----------------------------------------------------------------------------------------
+```
 sudo cat /var/lib/jenkins/secrets/initialAdminPassword
-.........................................................................................
+```
+------------------------------------------------------------------------------------------------------------------------------
 
-
-
-(2)
-.........................................................................................
-IF YOU ALREADY HAVE JENKINS ON AN EC2
-Activate the Jenkins user on that EC2 
-.........................................................................................
+- IF YOU ALREADY HAVE JENKINS ON AN EC2.
+Activate the Jenkins user on that EC2. 
+```
 sudo passwd jenkins
 sudo su - jenkins -s /bin/bash
------------------------------------------------------------------------------------------
+```
+------------------------------------------------------------------------------------------------------------------------------
 
+- CREATE A JENKINS USER IN YOUR AWS ACCOUNT
 
+	- Navigate to IAM in the AWS console. Next click on the Users option in the Access management. 
+	- Select add user. Next, the username can be EB-user. 
+	- Then select Programmatic access and then next.
+	- Select "Attach existing policies directly" and select administrator access. Now select Next for this page and the next page. 
+	- Finally, create the user and then copy and save the "access key ID" and the "secret access key".
 
-(3)
-.........................................................................................
-CREATE A JENKINS USER IN YOUR AWS ACCOUNT
-.........................................................................................
-Navigate to IAM in the AWS console. Next click on the 
-Users option in the Access management. 
-Select add user. Next, the username can be EB-user. 
-Then select Programmatic access and then next.
-Select "Attach existing policies directly" and select 
-administrator access. Now select Next for this page and 
-the next page. 
-Finally, create the user and then copy and save the 
-"access key ID" and the "secret access key"
-------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------
 
-
-
-(4)
-..........................................................................................
-INSTALL AWS CLI ON THE JENKINS EC2 AND CONFIGURE:
-..........................................................................................
+- INSTALL AWS CLI ON THE JENKINS EC2 AND CONFIGURE:
  
-#sudo usermod -a -G sudo jenkins(add jenkins user to the "sudo" group)
-#sudo apt install unzip(install the unzip package)
-
+```
+sudo apt install unzip
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" 
 ls
 unzip awscliv2.zip 
 sudo ./aws/install
 sudo su - jenkins -s /bin/bash
 aws configure
-	AWS Access Key ID [None]: (Set Access Key ID)
-	AWS Secret Access Key [None]: (Set Secret Access Key)
-	Default region name [None]: (Set region to: us-east-1)
-	Default output format [None]: (Set Output format: json)
-------------------------------------------------------------------------------------------
+```
+	- AWS Access Key ID [None]: (Set Access Key ID)
+	- AWS Secret Access Key [None]: (Set Secret Access Key)
+	- Default region name [None]: (Set region to: us-east-1)
+	- Default output format [None]: (Set Output format: json)
 
+------------------------------------------------------------------------------------------------------------------------------
 
+- INSTALL EB CLI IN JENKINS EC2 USER:
 
-(5)
-..........................................................................................
-INSTALL EB CLI IN JENKINS EC2 USER:
-..........................................................................................
 ADD TO PATH
 
-local path
+Local path
+```
 export PATH='/var/lib/jenkins/.local/bin:$PATH')
+```
 
-environment path
+Environment path
+```
 sudo nano /etc/environments
 :~/.local/bin(add to the end of environment path)
-
+```
+Install AWS Elastic Beanstalk CLI 
+```
 sudo apt install python3-pip
 sudo apt install python3.10-venv
 pip install awsebcli --upgrade --user
 eb --version
+```
 ------------------------------------------------------------------------------------------
 
+<h2>(2) Connect github to your Jenkins Server in order to test, build, and deploy the application.</h2>
+- CONNECT GITHUB TO JENKINS SERVER:
 
-
-
-(6)
-..........................................................................................
-CONNECT GITHUB TO JENKINS SERVER:
-..........................................................................................
-First Fork the Deployment repo: https://github.com/kura-labs.org/kuralabs deployment_2.git 
-Next, create an access token from GitHub:
-	Navigate to your GitHub settings, select developer settings.
-	Select personal access token and create a new token.
-	Select the settings you see below for access token permissions
-	.repo
-	.admin:repo_hook
+	- First Fork the Deployment repo: (https://github.com/cceliuss187/kuralabs_deployment_2)
+	- Next, create an access token from GitHub:
+	- Navigate to your GitHub settings, select developer settings.
+	- Select personal access token and create a new token.
+	- Select the settings you see below for access token permissions
+		- .repo
+		- .admin:repo_hook
 ------------------------------------------------------------------------------------------
 
 
@@ -183,6 +175,9 @@ def pgNOTfound():
     assert response.status_code == 404
 ---------------------------------------------------------------------------------------
 
+- ISSUES
+
+#sudo usermod -a -G sudo jenkins(add jenkins user to the "sudo" group)
 
 
 
