@@ -165,7 +165,7 @@ stage ('deploy') {
 
 
 
-<h2>(5) Add a new test to the test_app.py file to check to see if the response received from the page_not_found.html page is a status code of 404 </h2>
+<h2>(6) Add a new test to the test_app.py file to check to see if the response received from the page_not_found.html page is a status code of 404 </h2>
 
 ```
 #Check to see if the response received is a status code of 404
@@ -175,10 +175,12 @@ def pgNOTfound():
 ```
 ---------------------------------------------------------------------------------------
 
-- ISSUES
+<h1>ISSUES YOU MAY RUN INTO</h1>
 
-#sudo usermod -a -G sudo jenkins(add jenkins user to the "sudo" group)
-
+- Add jenkins user to the "sudo" group
+```
+sudo usermod -a -G sudo jenkins
+```
 
 
 	
