@@ -177,6 +177,10 @@ def pgNOTfound():
 
 <h1>ISSUES YOU MAY RUN INTO</h1>
 
+"jenkins is not in the sudoers file. This incident will be reported." is an error message you may run into. 
+
+Fix
+
 - Add jenkins user to the "sudo" group
 ```
 sudo usermod -a -G sudo jenkins
