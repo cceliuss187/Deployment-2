@@ -37,7 +37,6 @@ sudo passwd jenkins
 sudo su - jenkins -s /bin/bash
 ```
 ------------------------------------------------------------------------------------------------------------------------------
-
 - CREATE A JENKINS USER IN YOUR AWS ACCOUNT
 
 	- Navigate to IAM in the AWS console. Next click on the Users option in the Access management. 
@@ -47,7 +46,6 @@ sudo su - jenkins -s /bin/bash
 	- Finally, create the user and then copy and save the "access key ID" and the "secret access key".
 
 ------------------------------------------------------------------------------------------------------------------------------
-
 - INSTALL AWS CLI ON THE JENKINS EC2 AND CONFIGURE:
  
 ```
@@ -59,13 +57,13 @@ sudo ./aws/install
 sudo su - jenkins -s /bin/bash
 aws configure
 ```
+-
 	- AWS Access Key ID [None]: (Set Access Key ID)
 	- AWS Secret Access Key [None]: (Set Secret Access Key)
 	- Default region name [None]: (Set region to: us-east-1)
 	- Default output format [None]: (Set Output format: json)
 
 ------------------------------------------------------------------------------------------------------------------------------
-
 - INSTALL EB CLI IN JENKINS EC2 USER:
 
 ADD TO PATH
@@ -88,10 +86,9 @@ pip install awsebcli --upgrade --user
 eb --version
 ```
 ------------------------------------------------------------------------------------------
-
 <h2>(2) Connect github to your Jenkins Server in order to test, build, and deploy the application.</h2>
-- CONNECT GITHUB TO JENKINS SERVER:
 
+- CONNECT GITHUB TO JENKINS SERVER:
 	- First Fork the Deployment repo: (https://github.com/cceliuss187/kuralabs_deployment_2)
 	- Next, create an access token from GitHub:
 	- Navigate to your GitHub settings, select developer settings.
@@ -103,76 +100,79 @@ eb --version
 
 
 
-(7)
-..........................................................................................
-CREATE A MULTIBRANCH BUILD:
-..........................................................................................
-Log back into jenkins and select "New item".
-Select multibranch pipeline.
-enter a display name and brief description. 
-Add a branch source by selecting Add source and select GitHub.
-Select the add button and select GitHub.
-Click on Add and then select Jenkins.
-Under username enter your GitHub username.
-Under password enter your token.
-Enter your URL to the repository and you can validate by selecting validate.
-Make sure this says Jenkinsfile.
-Select Apply and then save.
+<h2>(3) In Jenkins, create and configure a miltibranch build.......</h2>
 
-You should see a build happening. if you don't, select Scan Repository.
+- CREATE A MULTIBRANCH BUILD:
+
+	- Log back into jenkins and select "New item".
+	- Select multibranch pipeline.
+	- enter a display name and brief description. 
+	- Add a branch source by selecting Add source and select GitHub.
+	- Select the add button and select GitHub.
+	- Click on Add and then select Jenkins.
+	- Under username enter your GitHub username.
+	- Under password enter your token.
+	- Enter your URL to the repository and you can validate by selecting validate.
+	- Make sure this says Jenkinsfile.
+	- Select Apply and then save.
+
+##### You should see a build happening. if you don't, select *Scan Repository.*
 ------------------------------------------------------------------------------------------
 
 
 
-(8)
-..........................................................................................
-NOW DEPLOY APPLICATION FROM ELASTIC BEANSTALK CLI:
-..........................................................................................
+<h2>(4) Create an Elastic Beanstalk environment and then deploy the application from the Elastic Beanstalk CLI</h2>
+
+```
 sudo su - jenkins -s /bin/bash
 cd /workspace/{{The name of your project}}/
 eb init
-	Select a default region: {{Select: us-east-1}}
-	Select an application to use: {{Select: url-shortner_main}}
-	It appears you are using Python. Is this correct? (Y/n): {{y}}
-	Select a platform branch: {{Select the latest version of python available}}
-	Do you wish to continue with CodeCommit? (Y/n): {{n}}
-	Do you want to set up SSH for your instances? (Y/n): {{y}}
-	Select a keypair: {{Select your keypair}}
+```
+-
+	- Select a default region: {{Select: us-east-1}}
+	- Select an application to use: {{Select: url-shortner_main}}
+	- It appears you are using Python. Is this correct? (Y/n): {{y}}
+	- Select a platform branch: {{Select the latest version of python available}}
+	- Do you wish to continue with CodeCommit? (Y/n): {{n}}
+	- Do you want to set up SSH for your instances? (Y/n): {{y}}
+	- Select a keypair: {{Select your keypair}}
+	
+```
 eb create
-	Enter Environment Name: {{press enter (default)}}
-	Enter DNS CNAME prefix: {{press enter (default)}}
-	Select a load balancer type: {{press enter (default)}}
-	Would you like to enable Spot Fleet requests for this environment? (y/N): {{n}}
-Wait for the environment to be made!! And then check it
+```
+
+-
+	- Enter Environment Name: {{press enter (default)}}
+	- Enter DNS CNAME prefix: {{press enter (default)}}
+	- Select a load balancer type: {{press enter (default)}}
+	- Would you like to enable Spot Fleet requests for this environment? (y/N): {{n}}
+	
+##### Wait for the environment to be made!! And then check it
 -------------------------------------------------------------------------------------------
 
 
 
-(9)
-...........................................................................................
-ADD A DEPLOYMENT STAGE TO THE PIPELINE IN YOUR JENKINSFILE:
-...........................................................................................
+<h2>(5) Add a deployment stage to the pipeline in your Jenkinsfile</h2>
 
-
+```
 stage ('deploy') {
        steps {
         sh '/var/lib/jenkins/.local/bin/eb deploy url-shortner-main-dev'
        }
      }
+```   
 ------------------------------------------------------------------------------------------
 
 
 
+<h2>(5) Add a new test to the test_app.py file to check to see if the response received from the page_not_found.html page is a status code of 404 </h2>
 
-(10)
-.......................................................................................
-ADD A NEW TEST:
-.......................................................................................
-
+```
 #Check to see if the response received is a status code of 404
 def pgNOTfound():
     response = app.test_client().get('page_not_found.html')
     assert response.status_code == 404
+```
 ---------------------------------------------------------------------------------------
 
 - ISSUES
